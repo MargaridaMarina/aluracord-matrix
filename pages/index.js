@@ -1,34 +1,9 @@
 import appConfig from '../config.json'
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import {useRouter} from 'next/router';
+import React from 'react';
 
-function GlobalStyle() {
-  return (
-    <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: 'Open Sans', sans-serif;
-      }
-      /* App fit Height */ 
-      html, body, #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */ 
-    `}</style>
-  );
-}
+
 
 function Titulo(props){
   const Tag = props.tag || 'h1';
@@ -60,11 +35,12 @@ function Titulo(props){
 // export default HomePage
 
 export default function PaginaInicial() {
-  const username = 'Margarida Marina';
+  // const username = 'Margarida Marina';
+  const [username, setUsername] = React.useState('margaridamarina');
+  const roteamento = useRouter();
 
   return (
     <>
-      <GlobalStyle />
       <Box
         styleSheet={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -91,6 +67,11 @@ export default function PaginaInicial() {
           {/* Formulário */}
           <Box
             as="form"
+            onSubmit={function(infosDoEvento){
+              infosDoEvento.preventDefault();
+              roteamento.push('/chat');
+            }}
+            
             styleSheet={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -100,8 +81,20 @@ export default function PaginaInicial() {
             <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
               {appConfig.name}
             </Text>
-
+            {/* <input 
+              type="text"
+              value={username}
+              onChange={function (event){
+                const valor = event.target.value;
+                setUsername(valor);
+              
+            /> */}
             <TextField
+              value={username}
+              onChange={function (event){
+                const valor = event.target.value;
+                setUsername(valor);
+              }}
               fullWidth
               textFieldColors={{
                 neutral: {
@@ -148,13 +141,13 @@ export default function PaginaInicial() {
                 borderRadius: '50%',
                 marginBottom: '16px',
               }}
-              src={`https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCmbezzVHRHUEF2PwN7OuruBVXtFo8kACwBw&usqp=CAU`}
+              src={`https://github.com/${username}.png`}
             />
             <Text
               variant="body4"
               styleSheet={{
                 color: appConfig.theme.colors.neutrals[200],
-                backgroundColor: appConfig.theme.colors.neutrals[900],
+                backgroundColor: appConfig.theme.colors.neutrals[500],
                 padding: '3px 10px',
                 borderRadius: '1000px'
               }}

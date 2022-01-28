@@ -1,6 +1,27 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMyNzM5NSwiZXhwIjoxOTU4OTAzMzk1fQ.2wYoOULQ8dA66Kz3FiMmlseAvpj2a8h7iEYVHLqPr2M';
+const SUPABASE_URL = 'https://tphxlcnhquwyhhevwteu.supabase.co';
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
+// fetch(`${SUPABASE_URL}/rest/v1/messagens?select=*`, {
+//   headers: {
+//     'Content-Type': 'application/json',
+//     'apikey': SUPABASE_ANON_KEY,
+//     'Authotization': 'Bearer ' + SUPABASE_ANON_KEY
+//   }
+// })
+//   .then((res) =>{
+//     return res.json();
+//   })
+//   .then((response) => {
+//     console.log(response);
+//   });
+
 
 export default function ChatPage() {
   /* 
@@ -19,6 +40,16 @@ export default function ChatPage() {
   //a primeira é o valor que vamos usar para mostrar e a segunda é o método para se quisermos alterar a mensagem usarmos ele, nao mudar o primeiro
   const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
+  React.useEffect(() => {
+    supabaseClient
+      .from('mensagens')
+      .select('*')
+      .order('id', { ascending: false })
+      .then(({ data }) => {
+        console.log('Dados da consulta:', data);
+        setListaDeMensagens(data);
+      });
+  }, []);
 
   function handleNovaMensagem(novaMensagem){
     const mensagem = {
@@ -26,14 +57,24 @@ export default function ChatPage() {
       de: 'margaridamarina',
       texto: novaMensagem,
     }
-    setListaDeMensagens([
-      mensagem,
-      ...listaDeMensagens
-    ]);
+    supabaseClient
+    .from('mensagens')
+    .insert([
+      // Tem que ser um objeto com os MESMOS CAMPOS que você escreveu no supabase
+      mensagem
+    ])
+    .then(({ data }) => {
+      console.log('Criando mensagem: ', data);
+      setListaDeMensagens([
+        data[0],
+        ...listaDeMensagens,
+      ]);
+    });
     setMensagem('');
   }
 
-  
+
+
     return (
         <Box
             styleSheet={{
@@ -172,7 +213,7 @@ function MessageList(props) {
                             display: 'inline-block',
                             marginRight: '8px',
                         }}
-                        src={`https://github.com/margaridamarina.png`}
+                        src={`https://github.com/${mensagem.de}.png`}
                     />
                     <Text tag="strong">
                         {mensagem.de}

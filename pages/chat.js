@@ -5,12 +5,12 @@ import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js'
 import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 
-// Como fazer AJAX: https://medium.com/@omariosouto/entendendo-como-fazer-ajax-com-a-fetchapi-977ff20da3c6
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MDg2OTA3MywiZXhwIjoxOTU2NDQ1MDczfQ.343ibq7UYFPDdyfsfGmEqUma01RW7P7KC9U2MDAGSkI';
-const SUPABASE_URL = 'https://kysxypdmtxjlkdysdlas.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzU2NTI5MSwiZXhwIjoxOTU5MTQxMjkxfQ.UjHkSl0ZxXaEzT2eX7H8KPfrTtOoVptWGwsop9YErrc';
+const SUPABASE_URL = 'https://jbcbeaxhblsqaizlllzu.supabase.co';
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function escutaMensagensEmTempoReal(adicionaMensagem) {
+
   return supabaseClient
     .from('mensagens')
     .on('INSERT', (respostaLive) => {
@@ -20,10 +20,27 @@ function escutaMensagensEmTempoReal(adicionaMensagem) {
 }
 
 export default function ChatPage() {
+    /*
+  //Usuario
+  - Digita no campo textarea
+  - Aperta enter para enviar
+  - Tem que adicionar o texto na listagem
+
+  //Dev
+  - Campo criado
+  - Usar o onChange que usa o useState(ter if para caso seja enter para limpar a variavel)
+  - Lista de mensagens
+  */
+  
   const roteamento = useRouter();
   const usuarioLogado = roteamento.query.username;
+
   const [mensagem, setMensagem] = React.useState('');
+  /*
+  uma variavel é o valor que vamos usar para imprimir e mostrar e a outra é o metodo que vai ser o set que se quisermos alterar a msg, chamamos ele, para que o react faça o ciclo dele -> alterar nos demais lugares
+  */
   const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
+  /*useState padrao é um array vazia pois ainda nao tem mensagem nenhuma*/
 
   React.useEffect(() => {
     supabaseClient
@@ -36,17 +53,14 @@ export default function ChatPage() {
       });
 
     const subscription = escutaMensagensEmTempoReal((novaMensagem) => {
-      console.log('Nova mensagem:', novaMensagem);
-      console.log('listaDeMensagens:', listaDeMensagens);
+      // console.log('Nova mensagem:', novaMensagem);
+      // console.log('listaDeMensagens:', listaDeMensagens);
+
       // Quero reusar um valor de referencia (objeto/array) 
       // Passar uma função pro setState
 
-      // setListaDeMensagens([
-      //     novaMensagem,
-      //     ...listaDeMensagens
-      // ])
       setListaDeMensagens((valorAtualDaLista) => {
-        console.log('valorAtualDaLista:', valorAtualDaLista);
+        // console.log('valorAtualDaLista:', valorAtualDaLista);
         return [
           novaMensagem,
           ...valorAtualDaLista,
@@ -117,13 +131,7 @@ export default function ChatPage() {
           }}
         >
           <MessageList mensagens={listaDeMensagens} />
-          {/* {listaDeMensagens.map((mensagemAtual) => {
-                        return (
-                            <li key={mensagemAtual.id}>
-                                {mensagemAtual.de}: {mensagemAtual.texto}
-                            </li>
-                        )
-                    })} */}
+   
           <Box
             as="form"
             styleSheet={{
@@ -139,7 +147,7 @@ export default function ChatPage() {
               }}
               onKeyPress={(event) => {
                 if (event.key === 'Enter') {
-                  event.preventDefault();
+                  event.preventDefault();/*tira a quebra de linha*/
                   handleNovaMensagem(mensagem);
                 }
               }}

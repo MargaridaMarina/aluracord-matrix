@@ -6,7 +6,7 @@ import React from 'react';
 
 
 function Titulo(props){
-  const Tag = props.tag || 'h1';
+  const Tag = props.tag || 'h1'; {/*Se não tiver nada, pega o h1*/}
   return (
     <>
       <Tag>{props.children}</Tag>
@@ -36,7 +36,7 @@ function Titulo(props){
 
 export default function PaginaInicial() {
   // const username = 'Margarida Marina';
-  const [username, setUsername] = React.useState('margaridamarina');
+  const [username, setUsername] = React.useState('');
   const roteamento = useRouter();
 
   return (
@@ -58,7 +58,7 @@ export default function PaginaInicial() {
               xs: 'column',
               sm: 'row',
             },
-            width: '100%', maxWidth: '700px',
+            width: '100%', maxWidth: '700px', maxHeight:'300px',
             borderRadius: '5px', padding: '32px', margin: '16px',
             boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
             backgroundColor: appConfig.theme.colors.neutrals[700],
